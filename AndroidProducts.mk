@@ -1,5 +1,6 @@
 PRODUCT_MAKEFILES := \
-    $(LOCAL_DIR)/aosp_markw.mk
+    $(LOCAL_DIR)/xtended_markw.mk
 
 COMMON_LUNCH_CHOICES := \
-    aosp_markw-userdebug
+    xtended_markw-userdebug \
+    xtended_markw-user

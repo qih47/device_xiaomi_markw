@@ -11,7 +11,7 @@ BUILD_BROKEN_VINTF_PRODUCT_COPY_FILES := true
 #BUILD_BROKEN_USES_BUILD_HOST_STATIC_LIBRARY := true
 #BUILD_BROKEN_USES_BUILD_HOST_EXECUTABLE := true
 BUILD_BROKEN_USES_BUILD_COPY_HEADERS := true
-
+TEMPORARY_DISABLE_PATH_RESTRICTIONS=true
 # depmod_vendor_intermidiates remove
 # signed ko file is not copied to correct path
 BOARD_DO_NOT_STRIP_VENDOR_MODULES := true
@@ -25,11 +25,13 @@ TARGET_ARCH_VARIANT := armv8-a
 TARGET_CPU_ABI := arm64-v8a
 TARGET_CPU_ABI2 :=
 TARGET_CPU_VARIANT := generic
+TARGET_CPU_VARIANT_RUNTIME := cortex-a53
 
 TARGET_2ND_ARCH := arm
 TARGET_2ND_ARCH_VARIANT := armv8-a
 TARGET_2ND_CPU_ABI := armeabi-v7a
 TARGET_2ND_CPU_ABI2 := armeabi
+TARGET_2ND_CPU_VARIANT := generic
 TARGET_2ND_CPU_VARIANT := cortex-a53
 
 TARGET_CPU_CORTEX_A53 := true
@@ -42,7 +44,7 @@ TARGET_USES_64_BIT_BINDER := true
 
 # Kernel
 BOARD_KERNEL_BASE := 0x80000000
-BOARD_KERNEL_CMDLINE := console=ttyMSM0,115200,n8 androidboot.console=ttyMSM0 androidboot.hardware=qcom msm_rtb.filter=0x237 ehci-hcd.park=3 lpm_levels.sleep_disabled=1 androidboot.bootdevice=7824900.sdhci earlycon=msm_serial_dm,0x78af000 androidboot.usbconfigfs=true loop.max_part=7
+BOARD_KERNEL_CMDLINE := androidboot.hardware=qcom msm_rtb.filter=0x237 ehci-hcd.park=3 androidboot.bootdevice=7824900.sdhci earlycon=msm_hsl_uart,0x78af000 firmware_class.path=/vendor/firmware_mnt/image androidboot.usbconfigfs=true
 BOARD_KERNEL_CMDLINE += androidboot.selinux=permissive
 BOARD_KERNEL_IMAGE_NAME := Image.gz-dtb
 BOARD_KERNEL_PAGESIZE :=  2048
@@ -58,7 +60,7 @@ TARGET_KERNEL_CLANG_COMPILE := true
 
 # ANT+
 #TARGET_USES_PREBUILT_ANT := true
-BOARD_ANT_WIRELESS_DEVICE := "qualcomm-hidl"
+BOARD_ANT_WIRELESS_DEVICE := "vfs-prerelease"
 
 # APEX image
 DEXPREOPT_GENERATE_APEX_IMAGE := true
@@ -129,6 +131,8 @@ TARGET_NO_BOOTLOADER := true
 
 # Bootanimation
 TARGET_BOOTANIMATION_HALF_RES := true
+TARGET_BOOTANIMATION_PRELOAD := true
+TARGET_BOOTANIMATION_TEXTURE_CACHE := true
 
 # Bluetooth
 BOARD_BLUETOOTH_BDROID_BUILDCFG_INCLUDE_DIR := $(DEVICE_PATH)/bluetooth
@@ -159,17 +163,12 @@ endif
 TARGET_ENABLE_MEDIADRM_64 := true
 
 # Display
-NUM_FRAMEBUFFER_SURFACE_BUFFERS := 3
-TARGET_FORCE_HWC_FOR_VIRTUAL_DISPLAYS := true
-TARGET_USES_COLOR_METADATA := true
-TARGET_USES_GRALLOC1 := true
 TARGET_USES_HWC2 := true
 TARGET_USES_ION := true
-TARGET_USES_NEW_ION_API := true
-TARGET_USES_QCOM_DISPLAY_BSP := true
-
-MAX_EGL_CACHE_KEY_SIZE := 12*1024
-MAX_EGL_CACHE_SIZE := 2048*1024
+TARGET_USES_GRALLOC1 := true
+TARGET_SCREEN_DENSITY := 401
+TARGET_USES_OVERLAY := true
+USE_OPENGL_RENDERER := true
 
 # Graphics
 TARGET_DISABLE_POSTRENDER_CLEANUP := true
@@ -203,6 +202,10 @@ DEVICE_MANIFEST_FILE := $(DEVICE_PATH)/manifest.xml
 DEVICE_MATRIX_FILE   := $(DEVICE_PATH)/compatibility_matrix.xml
 DEVICE_FRAMEWORK_COMPATIBILITY_MATRIX_FILE := $(DEVICE_PATH)/vendor_framework_compatibility_matrix.xml
 DEVICE_FRAMEWORK_MANIFEST_FILE := $(DEVICE_PATH)/framework_manifest.xml
+DEVICE_MANIFEST_FILE += $(DEVICE_PATH)/vintf/android.hardware.gnss@2.0-service-qti.xml
+DEVICE_MANIFEST_FILE += $(DEVICE_PATH)/vintf/vendor.qti.gnss@3.0-service.xml
+DEVICE_MANIFEST_FILE += $(DEVICE_PATH)/vintf/vendor.qti.esepowermanager@1.1-service.xml
+PRODUCT_ENFORCE_VINTF_MANIFEST_OVERRIDE := true
 
 # Init
 TARGET_INIT_VENDOR_LIB := //$(DEVICE_PATH):libinit_markw
@@ -216,6 +219,9 @@ BOARD_GLOBAL_CFLAGS += -DBATTERY_REAL_INFO
 
 # Media
 TARGET_USES_MEDIA_EXTENSIONS := true
+
+# Memory Config
+MALLOC_SVELTE := true
 
 # Partitions
 BOARD_CACHEIMAGE_PARTITION_SIZE := 268435456
@@ -248,6 +254,7 @@ TARGET_RIL_VARIANT := caf
 ENABLE_VENDOR_RIL_SERVICE := true
 TARGET_PROVIDES_QTI_TELEPHONY_JAR := true
 PROTOBUF_SUPPORTED := true
+DISABLE_RILD_OEM_HOOK := true
 
 # QCOM support
 BOARD_USES_QCOM_HARDWARE := true
@@ -259,32 +266,29 @@ TARGET_RECOVERY_FSTAB := $(DEVICE_PATH)/rootdir/etc/fstab.recovery.qcom
 # SELinux
 include device/qcom/sepolicy-legacy-um/SEPolicy.mk
 BOARD_VENDOR_SEPOLICY_DIRS += $(DEVICE_PATH)/sepolicy/vendor
-BOARD_PLAT_PRIVATE_SEPOLICY_DIR += $(DEVICE_PATH)/sepolicy/private
-SELINUX_IGNORE_NEVERALLOWS := true
+
 
 # System properties
 TARGET_SYSTEM_PROP += $(DEVICE_PATH)/system.prop
 TARGET_SYSTEM_EXT_PROP += $(DEVICE_PATH)/system_ext.prop
+TARGET_VENDOR_PROP := $(DEVICE_PATH)/vendor.prop
 
 # Telephony
 TARGET_USES_ALTERNATIVE_MANUAL_NETWORK_SELECT := true
 PRODUCT_WANTS_QTI_SIM_SETTINGS := true
 
 # Treble
-ENABLE_VENDOR_IMAGE := true
-PRODUCT_VENDOR_MOVE_ENABLED := true
 BOARD_PROPERTY_OVERRIDES_SPLIT_ENABLED := true
 PRODUCT_FULL_TREBLE_OVERRIDE := true
+BOARD_VNDK_VERSION := current
+BOARD_VNDK_RUNTIME_DISABLE := true
+PRODUCT_VENDOR_MOVE_ENABLED := true
+ENABLE_VENDOR_IMAGE := true
+
 
 # Security patch level
-#VENDOR_SECURITY_PATCH := 2020-02-05
-#PLATFORM_SECURITY_PATCH := 2019-11-05
+VENDOR_SECURITY_PATCH := 2021-02-05
 
-# VNDK
-#PRODUCT_TREBLE_LINKER_NAMESPACES := true
-#BOARD_VNDK_RUNTIME_DISABLE := true
-BOARD_SYSTEMSDK_VERSIONS:=$(SHIPPING_API_LEVEL)
-BOARD_VNDK_VERSION := current
 
 # Wifi
 BOARD_HAS_QCOM_WLAN := true
@@ -299,6 +303,7 @@ WIFI_DRIVER_FW_PATH_AP := "ap"
 WIFI_DRIVER_FW_PATH_STA := "sta"
 WIFI_DRIVER_FW_PATH_P2P := "p2p"
 WPA_SUPPLICANT_VERSION := VER_0_8_X
+
 
 # Inherit the proprietary files
 -include vendor/xiaomi/markw/BoardConfigVendor.mk
