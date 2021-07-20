@@ -3,4 +3,4 @@ PRODUCT_MAKEFILES := \
 
 COMMON_LUNCH_CHOICES := \
     xtended_markw-userdebug \
-    xtended_markw-user
+    xtended_markw-eng

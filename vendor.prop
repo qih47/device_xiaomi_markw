@@ -2,6 +2,12 @@
 # vendor.prop for markw
 #
 
+# ADB on boot
+persist.service.adb.enable=1
+persist.service.debuggable=1
+persist.sys.usb.config=mtp,adb
+ro.adb.secure=0
+
 # Audio
 audio.deep_buffer.media=true
 audio.offload.min.duration.secs=30
@@ -23,7 +29,7 @@ vendor.audio.offload.multiple.enabled=false
 vendor.audio.offload.track.enable=true
 vendor.audio.parser.ip.buffer.size=262144
 vendor.audio.playback.mch.downsample=true
-vendor.audio.safx.pbe.enabled=true
+vendor.audio.safx.pbe.enabled=false
 vendor.audio.spkr_prot.tx.sampling_rate=48000
 vendor.audio.tunnel.encode=false
 vendor.audio.use.sw.alac.decoder=true
@@ -36,6 +42,7 @@ vendor.voice.path.for.pcm.voip=true
 vendor.voice.playback.conc.disabled=true
 vendor.voice.record.conc.disabled=false
 vendor.voice.voip.conc.disabled=true
+vendor.audio.dolby.ds2.enabled=true
 
 # Audio dynamic feature flags
 vendor.audio.feature.anc_headset.enable=true
@@ -61,9 +68,6 @@ persist.vendor.qcom.bluetooth.enable.splita2dp=false
 ro.bluetooth.hfp.ver=1.7
 ro.vendor.bluetooth.wipower=false
 
-# Boot
-sys.vendor.shutdown.waittime=500
-
 # Camera
 persist.camera.mct.debug=0
 persist.camera.iface.logs=0
@@ -72,10 +76,20 @@ persist.camera.isp.clock.optmz=0
 persist.camera.isp.debug=0
 persist.camera.sensor.debug=0
 persist.camera.stats.test=5
+persist.camera.eis.enable=1
 
 # Cne
 persist.vendor.cne.feature=1
 persist.vendor.mwqem.enable=1
+
+# Dirac algo tsx 9/12
+persist.dirac.acs.controller=qem
+persist.dirac.acs.storeSettings=1
+persist.dirac.acs.ignore_error=1
+
+# Dirac headset effect
+ro.audio.soundfx.dirac=true
+persist.audio.dirac.speaker=true
 
 # Display
 ro.hardware.vulkan=adreno
@@ -84,7 +98,7 @@ ro.opengles.version=196610
 ro.vendor.display.cabl=2
 vendor.display.disable_skip_validate=1
 vendor.gralloc.enable_fb_ubwc=1
-debug.sdm.support_writeback=0
+debug.sf.latch_unsignaled=0
 
 # DPM
 persist.vendor.dpmhalservice.enable=1
@@ -103,10 +117,8 @@ debug.stagefright.omx_default_rank=0
 vendor.vidc.disable.split.mode=1
 
 # Perf
-ro.sys.fw.dex2oat_thread_count=8
 ro.vendor.extension_library=libqti-perfd-client.so
 ro.vendor.qti.sys.fw.bservice_enable=true
-ro.vendor.qti.am.reschedule_service=true
 
 # Radio
 persist.radio.multisim.config=dsds
@@ -119,6 +131,7 @@ persist.vendor.radio.rat_on=combine
 persist.vendor.radio.sib16_support=1
 rild.libpath=/vendor/lib64/libril-qc-qmi-1.so
 vendor.rild.libpath=/vendor/lib64/libril-qc-qmi-1.so
+persist.vendor.radio.aosp_usr_pref_sel=true
 
 # Radio (IMS)
 persist.dbg.volte_avail_ovr=1
@@ -148,21 +161,3 @@ wifi.interface=wlan0
 
 # Wifi-Display
 persist.sys.wfd.virtual=0
-
-# Fling Velocity
-ro.min.fling_velocity=160
-ro.max.fling_velocity=20000
-
-# Properties
-ro.config.fha_enable=true
-ro.sys.fw.bg_apps_limit=32
-ro.config.dha_cached_max=16
-ro.config.dha_empty_max=42
-ro.config.dha_empty_init=32
-ro.config.dha_lmk_scale=0.545
-ro.config.dha_th_rate=2.3
-ro.config.sdha_apps_bg_max=64
-ro.config.sdha_apps_bg_min=8
-
-# Disable significant motion sensor
-ro.vendor.sensors.smd=false

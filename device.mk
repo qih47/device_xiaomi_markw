@@ -9,6 +9,11 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/product_launched_with_o_mr1.mk
 DEVICE_PACKAGE_OVERLAYS += \
     $(LOCAL_PATH)/overlay
 
+# RRO (Runtime Resource Overlay)
+PRODUCT_ENFORCE_RRO_TARGETS := *
+PRODUCT_ENFORCE_RRO_EXCLUDED_OVERLAYS += $(LOCAL_PATH)/overlay/packages/apps/CarrierConfig 
+PRODUCT_ENFORCE_RRO_EXCLUDED_OVERLAYS += $(LOCAL_PATH)/overlay/packages/apps/Snap
+
 # skip boot jars check
 SKIP_BOOT_JARS_CHECK := true
 
@@ -277,10 +282,19 @@ PRODUCT_PROPERTY_OVERRIDES += \
 
 # Camera
 PRODUCT_PACKAGES += \
+    android.frameworks.displayservice@1.0_32 \
+    android.hardware.camera.common@1.0 \
+    android.hardware.camera.device@3.3:64 \
+    android.hardware.camera.device@3.4:64 \
+    android.hardware.camera.device@3.5:64 \
+    android.hardware.camera.provider@2.5:64 \
+    android.hardware.camera.provider@2.6:64 \
+    vendor.qti.hardware.camera.device@1.0 \
     camera.msm8953 \
+    libcamshim \
     libmm-qcamera \
-    Snap
-
+    libui_shim 
+    
 PRODUCT_PACKAGES += \
     android.hardware.camera.provider@2.4-impl \
     android.hardware.camera.provider@2.4-service \
@@ -296,10 +310,6 @@ PRODUCT_PROPERTY_OVERRIDES += \
     media.camera.ts.monotonic=1 \
     persist.camera.stats.test=5 \
     persist.vendor.qti.telephony.vt_cam_interface=1
-
-# Configstore
-PRODUCT_PACKAGES += \
-    android.hardware.configstore@1.0-service
 
 # Charger from ASUS
 PRODUCT_PACKAGES += \
@@ -321,29 +331,27 @@ PRODUCT_PACKAGES += \
 
 # Display
 PRODUCT_PACKAGES += \
+    vendor.qti.hardware.capabilityconfigstore@1.0.vendor \
     android.hardware.graphics.allocator@2.0-impl:64 \
     android.hardware.graphics.allocator@2.0-service \
-    android.hardware.graphics.composer@2.1-impl:64 \
     android.hardware.graphics.composer@2.1-service \
     android.hardware.graphics.mapper@2.0-impl-2.1 \
     android.hardware.memtrack@1.0-impl \
     android.hardware.memtrack@1.0-service \
-    copybit.msm8953 \
     gralloc.msm8953 \
     hwcomposer.msm8953 \
     memtrack.msm8953 \
     libdisplayconfig \
-    liboverlay \
-    libqdMetaData.system \
-    libqdMetaData \
+    libdisplayconfig.qti \
     libgenlock \
-    libnl \
+    libvulkan \
     libtinyxml \
-    libdisplayconfig.vendor \
     libqdMetaData \
     libqdMetaData.vendor \
     vendor.display.config@1.9 \
-    vendor.display.config@1.9_vendor
+    vendor.display.config@1.9.vendor 
+    #vendor.display.config@1.0.vendor 
+    #vendor.display.config@2.0
 
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.sf.lcd_density=440 \
@@ -428,9 +436,7 @@ PRODUCT_PACKAGES += \
 
 # HIDL
 PRODUCT_PACKAGES += \
-    android.hidl.base@1.0.vendor \
     android.hidl.base@1.0 \
-    android.hidl.base@1.0_system_ext \
     libhidltransport \
     libhidltransport.vendor \
     libhwbinder \
@@ -621,9 +627,9 @@ PRODUCT_PROPERTY_OVERRIDES += \
 # Power
 PRODUCT_PACKAGES += \
     android.hardware.power-service-qti \
-    power.qcom \
-    android.hardware.power@1.0-impl \
-    android.hardware.power@1.0-service
+    android.hardware.power.stats@1.0-service.mock \
+    vendor.qti.hardware.perf@2.0.vendor \
+    vendor.qti.hardware.perf@2.1.vendor
 
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/perf/powerhint.xml:$(TARGET_COPY_OUT_VENDOR)/etc/powerhint.xml
@@ -639,12 +645,6 @@ PRODUCT_PACKAGES += \
 # Pre-opt SystemUI
 PRODUCT_DEXPREOPT_SPEED_APPS += \
     SystemUI
-
-# Perf
-PRODUCT_PACKAGES += \
-    vendor.qti.hardware.perf@1.0.vendor \
-    vendor.qti.hardware.perf@2.0.vendor \
-    vendor.qti.hardware.perf@2.1.vendor
 
 # RIL
 PRODUCT_PACKAGES += \
@@ -734,9 +734,6 @@ PRODUCT_PROPERTY_OVERRIDES += \
     debug.sf.early_gl_app_phase_offset_ns=15000000 \
     debug.sf.enable_gl_backpressure=1
 
-# SurfaceFlinger
-TARGET_USE_QCOM_SURFACEFLINGER := true
-
 # Shims
 PRODUCT_PACKAGES += \
     libdpmframework_shim
@@ -744,10 +741,6 @@ PRODUCT_PACKAGES += \
 # SQL
 PRODUCT_PACKAGES += \
     sqlite3
-
-# Shutdown
-PRODUCT_PROPERTY_OVERRIDES += \
-    sys.vendor.shutdown.waittime=500
 
 # Telephony
 PRODUCT_PACKAGES += \
@@ -793,26 +786,12 @@ PRODUCT_PROPERTY_OVERRIDES += \
 PRODUCT_PACKAGES += \
     vendor.qti.hardware.vibrator.service
 
-# Vendor SPL
-VENDOR_SECURITY_PATCH = $(PLATFORM_SECURITY_PATCH)
-
 # VNDK
 PRODUCT_PACKAGES += \
-    vndk_package \
     libstdc++.vendor 
 
 PRODUCT_COPY_FILES += \
     prebuilts/vndk/v29/arm64/arch-arm64-armv8-a/shared/vndk-sp/libbinderthreadstate.so:$(TARGET_COPY_OUT_VENDOR)/lib64/libbinderthreadstate.so \
-    prebuilts/vndk/v28/arm64/arch-arm-armv8-a/shared/vndk-core/libprotobuf-cpp-lite.so:$(TARGET_COPY_OUT_VENDOR)/lib/libprotobuf-cpp-lite-v28.so \
-    prebuilts/vndk/v28/arm64/arch-arm64-armv8-a/shared/vndk-core/libprotobuf-cpp-full.so:$(TARGET_COPY_OUT_VENDOR)/lib64/libprotobuf-cpp-full-v28.so \
-    prebuilts/vndk/v29/arm/arch-arm-armv7-a-neon/shared/vndk-core/libprotobuf-cpp-full.so:$(TARGET_COPY_OUT_VENDOR)/lib/libprotobuf-cpp-full-v29.so \
-    prebuilts/vndk/v29/arm/arch-arm-armv7-a-neon/shared/vndk-core/libprotobuf-cpp-lite.so:$(TARGET_COPY_OUT_VENDOR)/lib/libprotobuf-cpp-lite-v29.so \
-    prebuilts/vndk/v29/arm64/arch-arm-armv8-a/shared/vndk-core/libprotobuf-cpp-full.so:$(TARGET_COPY_OUT_VENDOR)/lib/libprotobuf-cpp-full.so \
-    prebuilts/vndk/v29/arm64/arch-arm-armv8-a/shared/vndk-core/libprotobuf-cpp-lite.so:$(TARGET_COPY_OUT_VENDOR)/lib/libprotobuf-cpp-lite.so \
-    prebuilts/vndk/v29/arm64/arch-arm64-armv8-a/shared/vndk-core/libprotobuf-cpp-full.so:$(TARGET_COPY_OUT_VENDOR)/lib64/libprotobuf-cpp-full.so \
-    prebuilts/vndk/v29/arm64/arch-arm64-armv8-a/shared/vndk-core/libprotobuf-cpp-lite.so:$(TARGET_COPY_OUT_VENDOR)/lib64/libprotobuf-cpp-lite.so \
-    prebuilts/vndk/v29/arm64/arch-arm64-armv8-a/shared/vndk-core/libprotobuf-cpp-full.so:$(TARGET_COPY_OUT_VENDOR)/lib64/libprotobuf-cpp-full-v29.so \
-    prebuilts/vndk/v29/arm64/arch-arm64-armv8-a/shared/vndk-core/libprotobuf-cpp-lite.so:$(TARGET_COPY_OUT_VENDOR)/lib64/libprotobuf-cpp-lite-v29.so
 
 PRODUCT_COPY_FILES += \
     prebuilts/vndk/v29/arm64/arch-arm64-armv8-a/shared/vndk-sp/libc++.so:$(TARGET_COPY_OUT_VENDOR)/lib64/libc++.so
@@ -869,4 +848,4 @@ PRODUCT_PROPERTY_OVERRIDES += \
 $(call inherit-product-if-exists, vendor/xiaomi/markw/markw-vendor.mk)
 
 # Firmware
-$(call inherit-product-if-exists, vendor/xiaomi/markw/firmware/firmware.mk)
+$(call inherit-product-if-exists, vendor/xiaomi/firmware/firmware.mk)

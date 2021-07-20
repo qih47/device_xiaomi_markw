@@ -166,6 +166,12 @@ on boot
     # Prevents permission denied error for telephony
     chmod 0644 /proc/cmdline
 
+# Access permission for SmartCharging
+    chown system system /sys/class/power_supply/battery/charging_enabled
+    chmod 0666 /sys/class/power_supply/battery/charging_enabled
+    chown system system /sys/class/power_supply/battery/input_suspend
+    chmod 0666 /sys/class/power_supply/battery/input_suspend
+
     #enable camera read sensors data
     setprop persist.camera.gyro.disable 0
 
